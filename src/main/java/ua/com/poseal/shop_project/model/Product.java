@@ -7,6 +7,7 @@ import ua.com.poseal.shop_project.model.enums.ProductStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity
 @Table(name = "products")
 @Getter @Setter
 @NoArgsConstructor
