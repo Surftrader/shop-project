@@ -3,7 +3,10 @@ package ua.com.poseal.shop_project.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ua.com.poseal.shop_project.dto.ProductCreateRequest;
+import ua.com.poseal.shop_project.model.Category;
 import ua.com.poseal.shop_project.model.Product;
+import ua.com.poseal.shop_project.model.enums.ProductStatus;
 import ua.com.poseal.shop_project.repository.CategoryRepository;
 import ua.com.poseal.shop_project.repository.ProductRepository;
 
@@ -19,17 +22,23 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public Product addProduct(Product product, Long category_id) {
-        if (product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("The price must be greater than zero.");
-        }
-        return categoryRepository.findById(category_id)
-                .map(category -> {
-                    product.setCategory(category);
-                    return productRepository.save(product);
-                })
+    public Product addProduct(ProductCreateRequest request) {
+        Category category = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        Product product = Product.builder()
+                .name(request.name())
+                .description(request.description())
+                .price(request.price())
+                .stockQuantity(request.stockQuantity())
+                .status(ProductStatus.AVAILABLE)
+                .category(category)
+                .build();
+
+        return productRepository.save(product);
     }
+
+
 
     public List<Product> getProductsByCategory(Long categoryId) {
         return productRepository.findByCategoryId(categoryId);
