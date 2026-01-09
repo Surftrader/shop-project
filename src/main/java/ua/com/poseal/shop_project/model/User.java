@@ -25,6 +25,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
